@@ -1,0 +1,15 @@
+{
+  "name": "rails-i18n",
+  "main": "./lib/rails-i18n",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "activationCommands": {
+  },
+  "repository": "https://github.com/atom/rails-i18n",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}
