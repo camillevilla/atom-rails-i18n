@@ -3,10 +3,13 @@ module.exports = class YamlKeyReader
   constructor: (@string) ->
 
   keys: ->
+    for key in @keysWithRow()
+      [key[0], key[1] ]
+
+  keysWithRow: ->
     indentationRules = [-1]
     keys = []
-    console.log(@string.split("\n"))
-    for row in @string.split("\n") when row.indexOf(':') > -1
+    for row, line in @string.split("\n") when row.indexOf(':') > -1 && !row.match(/^\s*#/)
       spaces = row.split(/[^\s]/)[0].length
       split = row.split(":")
       key = split.shift()
@@ -18,4 +21,4 @@ module.exports = class YamlKeyReader
 
       indentationRules.unshift(spaces)
       keys.push(key.trim())
-      [keys.join("."), values]
+      [keys.join("."), values, line]

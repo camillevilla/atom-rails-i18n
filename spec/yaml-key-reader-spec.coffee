@@ -22,3 +22,11 @@ describe 'YamlKeyReader', ->
   it 'ignores lines without :', ->
     reader = new Reader  "pt:\n  foo: ! 'Foo bar\n  baz'"
     expect(reader.keys()).toEqual [["pt", ''], ["pt.foo", "! 'Foo bar"]]
+
+  it 'ignores comments', ->
+    reader = new Reader  "# nothing: at all\npt: #BR\n#  foo:bar"
+    expect(reader.keys()).toEqual [["pt", '#BR']]
+
+  it 'shows line numbers with keys', ->
+    reader = new Reader  "# nothing: at all\npt: #BR\n#  foo:bar\n  bar: baz"
+    expect(reader.keysWithRow()).toEqual [["pt", '#BR', 1], ['pt.bar', 'baz', 3]]
