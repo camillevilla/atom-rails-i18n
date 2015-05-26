@@ -12,5 +12,12 @@
   },
   "dependencies": {
     "atom-space-pen-views": "*"
+  },
+  "providedServices": {
+    "everything.search": {
+      "versions": {
+        "0.1.0": "provide"
+      }
+    }
   }
 }
