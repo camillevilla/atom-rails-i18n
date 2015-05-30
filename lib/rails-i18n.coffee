@@ -83,15 +83,21 @@ module.exports = RailsI18n =
       @findLocales().then (values) ->
         values.forEach (value) -> value.forEach (item) ->
           fn = ->
+            console.log("Bar")
+            console.log(item)
             items = []
             loaded = false
             atom.workspace.open(item.file, initialLine: item.line)
 
           items.push(
-            displayName: item.value,
+            displayName: item.value
             queryString: "#{item.key} #{item.value}"
-            function: fn,
+            function: fn
             additionalInfo: item.key
+            commands: {
+              "Open File": fn
+              "Copy Key to Clipboard": => atom.clipboard.write(item.key)
+            }
           )
         loaded = true
         resolve(items)
