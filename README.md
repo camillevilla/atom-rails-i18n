@@ -1,5 +1,15 @@
-# rails-i18n package
+# Rails I18n
 
-A short description of your package.
+Helpers to work with I18n in Rails projects.
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+This package works better with the "everything" package.
+
+![Finding key with Everything](docs/preview.gif)
+
+
+This package tries to find every .yml file that resembles an I18n yaml (like pt-BR.yml, or en.yml) and maps their key-values, so we can try to find they with Everything or running one of the codes: rails-i18n:find-keys or rails-i18n:find-translation
+
+## Future
+
+* Try to autocomplete translations, finding each scope of current file or class
+* Automatically create new translations, putting then on the correct file (or creating a new one if it still doesn't exists yet)
