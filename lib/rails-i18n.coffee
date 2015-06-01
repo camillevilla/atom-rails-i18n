@@ -4,6 +4,7 @@
 YamlKeyReader = require './yaml-key-reader'
 child = require 'child_process'
 fs = require 'fs'
+findLocales = require './find-locales'
 
 class Finder extends SelectListView
   initialize: (items, key, addInfo) ->
@@ -40,15 +41,13 @@ class Finder extends SelectListView
 module.exports = RailsI18n =
   activate: (state) ->
     atom.commands.add 'atom-workspace', 'rails-i18n:search-key', =>
-      new Finder(@findLocales(), 'key')
+      new Finder(@findLocalesSync(), 'key')
 
     atom.commands.add 'atom-workspace', 'rails-i18n:search-translation', =>
       finder = new Finder(@findLocalesSync(), 'value', 'key')
-      # finder.viewForItem = (item) ->
-      #   "<li>#{item.value} <div class='pull-right key-binding'>#{item.key}</div></li>"
 
   findLocalesSync: ->
-    projectPath = atom.project.getPath()
+    projectPath = atom.project.getPaths()[0]
     ymls = child.spawnSync('find', ['-L', projectPath, '-name', '*.yml']).stdout.toString().trim()
     return Promisse.resolve([]) if ymls == ''
 
@@ -60,36 +59,19 @@ module.exports = RailsI18n =
         keys.push(key: key, value: value, file: yml, line: line)
     keys
 
-  findLocales: ->
-    projectPath = atom.project.getPath()
-    ymls = child.spawnSync('find', ['-L', projectPath, '-name', '*.yml']).stdout.toString().trim()
-    ymls = ymls.split("\n").filter (e) -> e.match(/\/\w{2}(-\w{2})?\./)
-
-    keys = []
-    ymls.forEach (yml) ->
-      keys.push new Promise (resolve) ->
-        fs.readFile yml, (_, contents) ->
-          reader = new YamlKeyReader(contents.toString())
-          result = reader.keysWithRow().map ([key, value, line]) ->
-            {key: key, value: value, file: yml, line: line}
-          resolve(result)
-    Promise.all(keys)
-
   provide: ->
     loaded = false
     items = []
 
     loadAndResolve = (resolve) =>
-      @findLocales().then (values) ->
-        values.forEach (value) -> value.forEach (item) ->
+      findLocales().then (values) ->
+        items = values.map (item) ->
           fn = ->
-            console.log("Bar")
-            console.log(item)
             items = []
             loaded = false
             atom.workspace.open(item.file, initialLine: item.line)
 
-          items.push(
+          {
             displayName: item.value
             queryString: "#{item.key} #{item.value}"
             function: fn
@@ -98,7 +80,7 @@ module.exports = RailsI18n =
               "Open File": fn
               "Copy Key to Clipboard": => atom.clipboard.write(item.key)
             }
-          )
+          }
         loaded = true
         resolve(items)
 
@@ -113,5 +95,3 @@ module.exports = RailsI18n =
 
       shouldRun: (query) -> query.length > 5
     }
-
-window.F = Finder
