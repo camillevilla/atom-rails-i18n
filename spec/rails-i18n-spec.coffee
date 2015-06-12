@@ -39,7 +39,7 @@ describe "RailsI18n", ->
 
           atom.clipboard.write("foo")
           match.commands["Copy Key to Clipboard"]()
-          expect(atom.clipboard.read()).toEqual "en.view.title"
+          expect(atom.clipboard.read()).toEqual "view.title"
 
   findMatch = (array, elements) ->
     array.filter (e) ->

@@ -78,7 +78,8 @@ module.exports = RailsI18n =
             additionalInfo: item.key
             commands: {
               "Open File": fn
-              "Copy Key to Clipboard": => atom.clipboard.write(item.key)
+              "Copy Key to Clipboard": =>
+                atom.clipboard.write(item.key.replace(/.*?\./, ''))
             }
           }
         loaded = true
