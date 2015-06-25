@@ -60,39 +60,34 @@ module.exports = RailsI18n =
     keys
 
   provide: ->
-    loaded = false
     items = []
-
-    loadAndResolve = (resolve) =>
-      findLocales().then (values) ->
-        items = values.map (item) ->
-          fn = ->
-            items = []
-            loaded = false
-            atom.workspace.open(item.file, initialLine: item.line)
-
-          {
-            displayName: item.value
-            queryString: "#{item.key} #{item.value}"
-            function: fn
-            additionalInfo: item.key
-            commands: {
-              "Open File": fn
-              "Copy Key to Clipboard": =>
-                atom.clipboard.write(item.key.replace(/.*?\./, ''))
-            }
-          }
-        loaded = true
-        resolve(items)
+    promise = null
 
     {
       name: 'rails-i18n',
 
-      function: (query) -> new Promise (resolve) ->
-        if loaded
-          resolve(items)
-        else
-          loadAndResolve(resolve)
+      function: (query) -> promise
 
       shouldRun: (query) -> query.length > 5
+
+      onStart: -> promise = new Promise (resolve) ->
+        findLocales().then (values) ->
+          items = values.map (item) ->
+            fn = ->
+              items = []
+              loaded = false
+              atom.workspace.open(item.file, initialLine: item.line)
+
+            {
+              displayName: item.value
+              queryString: "#{item.key} #{item.value}"
+              function: fn
+              additionalInfo: item.key
+              commands: {
+                "Open File": fn
+                "Copy Key to Clipboard": =>
+                  atom.clipboard.write(item.key.replace(/.*?\./, ''))
+              }
+            }
+          resolve(items)
     }
