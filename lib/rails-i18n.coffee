@@ -16,12 +16,11 @@ class Finder extends SelectListView
       item
     @setItems(i)
 
-    atom.workspace.addModalPanel(item: this, visible: true)
+    @panel = atom.workspace.addModalPanel(item: this, visible: true)
     @focusFilterEditor()
     @on 'keypress', (evt) =>
       if evt.ctrlKey
         atom.clipboard.write @getSelectedItem().key
-
 
   viewForItem: (item) ->
     if @addInfo
@@ -32,19 +31,27 @@ class Finder extends SelectListView
 
   getFilterKey: -> @filterKey
 
-  cancel: -> @hide()
-
   confirmed: (item) ->
     atom.workspace.open(item.file, initialLine: item.line)
-    @hide()
+    @cancel()
+
+  cancelled: ->
+    @panel.hide()
+
+  destroy: ->
+    @cancel()
+    @pane.destroy()
+
 
 module.exports = RailsI18n =
   activate: (state) ->
     atom.commands.add 'atom-workspace', 'rails-i18n:search-key', =>
-      new Finder(@findLocalesSync(), 'key')
+      findLocales().then (locales) ->
+        new Finder(locales, 'key')
 
     atom.commands.add 'atom-workspace', 'rails-i18n:search-translation', =>
-      finder = new Finder(@findLocalesSync(), 'value', 'key')
+      findLocales().then (locales) ->
+        new Finder(locales, 'value', 'key')
 
   findLocalesSync: ->
     projectPath = atom.project.getPaths()[0]
