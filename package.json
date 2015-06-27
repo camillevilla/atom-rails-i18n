@@ -1,7 +1,7 @@
 {
   "name": "rails-i18n",
   "main": "./lib/rails-i18n",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Helpers to work with translation files in Rails",
   "activationCommands": {},
   "repository": "https://github.com/mauricioszabo/atom-rails-i18n",
