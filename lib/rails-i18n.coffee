@@ -15,7 +15,7 @@ class Finder extends SelectListView
       item
     @setItems(i)
 
-    atom.workspaceView.append(this)
+    atom.workspace.addModalPanel(item: this, visible: false)
     @focusFilterEditor()
     @on 'keypress', (evt) =>
       if evt.ctrlKey
@@ -61,7 +61,7 @@ module.exports = RailsI18n =
     keys
 
   findLocales: ->
-    projectPath = atom.project.getPath()
+    projectPath = atom.project.getPaths()[0]
     ymls = child.spawnSync('find', ['-L', projectPath, '-name', '*.yml']).stdout.toString().trim()
     ymls = ymls.split("\n").filter (e) -> e.match(/\/\w{2}(-\w{2})?\./)
 
