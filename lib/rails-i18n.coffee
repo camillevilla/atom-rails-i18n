@@ -62,15 +62,24 @@ module.exports = RailsI18n =
   provide: ->
     items = []
     promise = null
+    fuzzaldrin = null
 
-    {
-      name: 'rails-i18n',
+    name: 'rails-i18n',
+    function: (query) -> Promise.all([promise]).then ([elements]) ->
+      if fuzzaldrin?
+        elements.map (e) ->
+          element = Object.create(e)
+          element.score = fuzzaldrin.score(element.queryString, query) / 5
+          element
 
-      function: (query) -> promise
+      else
+        elements
 
-      shouldRun: (query) -> query.length > 5
+    shouldRun: (query) -> query.length > 3
 
-      onStart: -> promise = new Promise (resolve) ->
+    onStart: (evry) ->
+      fuzzaldrin = evry.fuzzaldrin
+      promise = new Promise (resolve) ->
         findLocales().then (values) ->
           items = values.map (item) ->
             fn = ->
@@ -78,16 +87,13 @@ module.exports = RailsI18n =
               loaded = false
               atom.workspace.open(item.file, initialLine: item.line)
 
-            {
-              displayName: item.value
-              queryString: "#{item.key} #{item.value}"
-              function: fn
-              additionalInfo: item.key
-              commands: {
-                "Open File": fn
-                "Copy Key to Clipboard": =>
-                  atom.clipboard.write(item.key.replace(/.*?\./, ''))
-              }
+            displayName: item.value
+            queryString: "#{item.key} #{item.value}"
+            function: fn
+            additionalInfo: item.key
+            commands: {
+              "Open File": fn
+              "Copy Key to Clipboard": =>
+                atom.clipboard.write(item.key.replace(/.*?\./, ''))
             }
           resolve(items)
-    }
