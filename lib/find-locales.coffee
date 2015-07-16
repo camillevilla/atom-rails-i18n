@@ -11,11 +11,11 @@ module.exports = ->
       ymls = ymls.concat(temp)
 
     keys = []
-    ymls.forEach (yml) ->
-      keys.push new Promise (resolve) ->
+    promises = ymls.map (yml) ->
+      new Promise (resolve) ->
         fs.readFile yml, (_, contents) ->
           reader = new YamlKeyReader(contents.toString())
-          result = reader.keysWithRow().map ([key, value, line]) ->
-            {key: key, value: value, file: yml, line: line}
-          resolve(result)
-    Promise.all(keys).then (arrays) -> arrays.reduce ((r, a) -> r.concat(a)), []
+          reader.keysWithRow().forEach ([key, value, line]) ->
+            keys.push(key: key, value: value, file: yml, line: line)
+          resolve()
+    Promise.all(promises).then -> keys
