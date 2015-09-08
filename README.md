@@ -10,7 +10,7 @@ This package works better with the "everything" package.
 This package tries to find every .yml file that resembles an I18n yaml (like pt-BR.yml, or en.yml) and maps their key-values, so we can try to find they with Everything or running one of the codes: rails-i18n:find-keys or rails-i18n:find-translation
 
 ## Standalone mode
-When only Rails-i18n is installed, it will add two commands: Find Keys or Find Translations. When you run any of these codes, it'll open a finder so you can search by I18n keys or I18n translations. Pressing **ENTER** will open the file where that key or translation is defined, and pressing **CTRL+C** will copy the key.
+When only Rails-i18n is installed, it will add two commands: `Search Key` or `Search Translation`. When you run any of these codes, it'll open a finder so you can search by I18n keys or I18n translations. Pressing **ENTER** will open the file where that key or translation is defined, and pressing **CTRL+C** will copy the key.
 
 ## Usage with Everything
 With everything, things are simple: when you start to find anything with Everything plugin, after you type at least 6 characters, it'll try to match what you typed with a key or translation in I18n.
